@@ -2,12 +2,9 @@
 
 <section>
   <h1>Mis notificaciones</h1>
-
   <% if (!notifs || notifs.length === 0) { %>
     <p>No tienes notificaciones.</p>
-  <% } %>
-
-  <% if (notifs && notifs.length > 0) { %>
+  <% } else { %>
     <ul>
       <% notifs.forEach(n => { %>
         <li>

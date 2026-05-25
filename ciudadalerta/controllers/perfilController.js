@@ -1,5 +1,4 @@
 const supabase = require('../config/supabase');
-const ReporteModel = require('../models/reporteModel');
 
 exports.index = (req, res) => {
   res.render('perfil/index', { usuario: req.session.usuario });
@@ -13,14 +12,23 @@ exports.misReportes = async (req, res) => {
       .order('created_at', { ascending: false });
     res.render('perfil/mis-reportes', { reportes: reportes || [] });
   } catch (e) {
-    res.status(500).send(e.message);
+    console.error('Error al listar mis reportes:', e);
+    res.status(500).send('Error al cargar reportes');
   }
 };
 
 exports.actualizar = async (req, res) => {
   const { nombre } = req.body;
-  await supabase.from('usuarios')
-    .update({ nombre }).eq('id', req.session.usuario.id);
-  req.session.usuario.nombre = nombre;
-  res.redirect('/perfil');
+  try {
+    const { error } = await supabase.from('usuarios')
+      .update({ nombre })
+      .eq('id', req.session.usuario.id);
+    if (error) throw error;
+
+    req.session.usuario.nombre = nombre;
+    res.redirect('/perfil');
+  } catch (e) {
+    console.error('Error al actualizar perfil:', e);
+    res.status(500).send('Error al actualizar perfil');
+  }
 };

@@ -27,7 +27,8 @@ exports.dashboard = async (req, res) => {
 
     res.render('admin/dashboard', { stats, antiguos: antiguos || [] });
   } catch (e) {
-    res.status(500).send(e.message);
+    console.error('Error en dashboard admin:', e);
+    res.status(500).send('Error al cargar dashboard');
   }
 };
 
@@ -42,7 +43,8 @@ exports.listarReportes = async (req, res) => {
     const categorias = await CategoriaModel.listarTodas();
     res.render('admin/reportes', { reportes, categorias, filtros });
   } catch (e) {
-    res.status(500).send(e.message);
+    console.error('Error al listar reportes admin:', e);
+    res.status(500).send('Error al listar reportes');
   }
 };
 
@@ -68,7 +70,7 @@ exports.updateEstado = async (req, res) => {
     });
 
     const mensajes = {
-      en_proceso: 'Tu reporte fue recibido y esta siendo atendido.',
+      en_proceso: 'Tu reporte fue recibido y está siendo atendido.',
       resuelto: 'Tu reporte ha sido marcado como resuelto.',
       rechazado: 'Tu reporte fue revisado y no procede: ' + (comentario || '')
     };
@@ -79,7 +81,8 @@ exports.updateEstado = async (req, res) => {
     }
     res.redirect('/admin/reportes');
   } catch (e) {
-    res.status(500).send(e.message);
+    console.error('Error al actualizar estado de reporte:', e);
+    res.status(500).send('Error al actualizar estado');
   }
 };
 

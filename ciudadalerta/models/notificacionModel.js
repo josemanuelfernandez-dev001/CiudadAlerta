@@ -17,7 +17,11 @@ exports.listarPorUsuario = async (usuario_id) => {
 };
 
 exports.marcarLeida = async (id) => {
-  await supabase.from('notificaciones').update({ leida: true }).eq('id', id);
+  const { error } = await supabase
+    .from('notificaciones')
+    .update({ leida: true })
+    .eq('id', id);
+  if (error) throw error;
 };
 
 exports.contarNoLeidas = async (usuario_id) => {
