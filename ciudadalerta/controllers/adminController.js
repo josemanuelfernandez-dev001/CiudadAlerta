@@ -87,8 +87,13 @@ exports.updateEstado = async (req, res) => {
 };
 
 exports.eliminarReporte = async (req, res) => {
-  await ReporteModel.eliminar(req.params.id);
-  res.redirect('/admin/reportes');
+  try {
+    await ReporteModel.eliminar(req.params.id);
+    res.redirect('/admin/reportes');
+  } catch (e) {
+    console.error('Error al eliminar reporte:', e);
+    res.status(500).send('Error al eliminar reporte');
+  }
 };
 
 exports.listarCategorias = async (req, res) => {
@@ -97,19 +102,29 @@ exports.listarCategorias = async (req, res) => {
 };
 
 exports.crearCategoria = async (req, res) => {
-  const { nombre, icono, color_hex, competencia } = req.body;
-  await CategoriaModel.crear({ nombre, icono, color_hex, competencia });
-  res.redirect('/admin/categorias');
+  try {
+    const { nombre, icono, color_hex, competencia } = req.body;
+    await CategoriaModel.crear({ nombre, icono, color_hex, competencia });
+    res.redirect('/admin/categorias');
+  } catch (e) {
+    console.error('Error al crear categoría:', e);
+    res.status(500).send('Error al crear categoría');
+  }
 };
 
 exports.actualizarCategoria = async (req, res) => {
-  const { nombre, icono, color_hex, competencia, activa } = req.body;
-  await CategoriaModel.actualizar(req.params.id, {
-    nombre,
-    icono,
-    color_hex,
-    competencia,
-    activa: activa === 'true'
-  });
-  res.redirect('/admin/categorias');
+  try {
+    const { nombre, icono, color_hex, competencia, activa } = req.body;
+    await CategoriaModel.actualizar(req.params.id, {
+      nombre,
+      icono,
+      color_hex,
+      competencia,
+      activa: activa === 'true'
+    });
+    res.redirect('/admin/categorias');
+  } catch (e) {
+    console.error('Error al actualizar categoría:', e);
+    res.status(500).send('Error al actualizar categoría');
+  }
 };

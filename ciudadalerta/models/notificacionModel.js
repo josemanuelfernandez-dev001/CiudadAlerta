@@ -24,11 +24,23 @@ exports.marcarLeida = async (id) => {
   if (error) throw error;
 };
 
+exports.marcarLeidaPorUsuario = async (id, usuario_id) => {
+  const { data, error } = await supabase
+    .from('notificaciones')
+    .update({ leida: true })
+    .eq('id', id)
+    .eq('usuario_id', usuario_id)
+    .select('id');
+  if (error) throw error;
+  return Array.isArray(data) && data.length > 0;
+};
+
 exports.contarNoLeidas = async (usuario_id) => {
-  const { count } = await supabase
+  const { count, error } = await supabase
     .from('notificaciones')
     .select('*', { count: 'exact' })
     .eq('usuario_id', usuario_id)
     .eq('leida', false);
+  if (error) throw error;
   return count || 0;
 };

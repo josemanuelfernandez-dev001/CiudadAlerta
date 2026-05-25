@@ -12,11 +12,11 @@ exports.index = async (req, res) => {
 
 exports.marcarLeida = async (req, res) => {
   try {
-    const notifs = await NotificacionModel.listarPorUsuario(req.session.usuario.id);
-    const notificacion = notifs.find(n => String(n.id) === String(req.params.id));
-    if (!notificacion) return res.status(403).send('Acceso denegado');
-
-    await NotificacionModel.marcarLeida(req.params.id);
+    const ok = await NotificacionModel.marcarLeidaPorUsuario(
+      req.params.id,
+      req.session.usuario.id
+    );
+    if (!ok) return res.status(403).send('Acceso denegado');
     res.redirect('/notificaciones');
   } catch (e) {
     console.error('Error al marcar notificación como leída:', e);
