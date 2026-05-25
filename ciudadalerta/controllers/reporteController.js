@@ -1,4 +1,5 @@
 const supabase = require('../config/supabase');
+const path = require('path');
 const ReporteModel = require('../models/reporteModel');
 const CategoriaModel = require('../models/categoriaModel');
 
@@ -20,7 +21,7 @@ exports.mapa = async (req, res) => {
     const reportes = await ReporteModel.listar();
     const categorias = await CategoriaModel.listarActivas();
     res.render('reportes/mapa', { reportes, categorias });
-  } catch (e) { res.status(500).send(e.message); }
+  } catch (e) { res.status(500).send('Error al cargar mapa'); }
 };
 
 exports.nuevo = async (req, res) => {
@@ -43,11 +44,17 @@ exports.store = async (req, res) => {
 
     // Subir fotos si existen
     if (req.files && req.files.length > 0) {
+      const allowedExt = ['.jpg', '.jpeg', '.png', '.webp'];
       for (const file of req.files) {
-        const safeOriginalName = file.originalname
+        const baseName = path.basename(file.originalname);
+        const ext = path.extname(baseName).toLowerCase();
+        if (!allowedExt.includes(ext)) continue;
+        const nameOnly = path.basename(baseName, ext);
+        const safeOriginalName = nameOnly
           .replace(/[^a-zA-Z0-9._-]/g, '_')
-          .replace(/_+/g, '_');
-        const filename = Date.now() + '_' + safeOriginalName;
+          .replace(/_+/g, '_')
+          .replace(/^_+|_+$/g, '');
+        const filename = Date.now() + '_' + (safeOriginalName || 'imagen') + ext;
         await supabase.storage.from('fotos-reportes')
           .upload(filename, file.buffer, { contentType: file.mimetype });
         const { data: { publicUrl } } = supabase.storage
@@ -89,7 +96,10 @@ exports.votar = async (req, res) => {
   try {
     await supabase.from('votos').insert({ reporte_id, usuario_id });
     res.redirect('/reportes/' + reporte_id);
-  } catch (e) { res.redirect('/reportes/' + reporte_id); }
+  } catch (e) {
+    console.error('Error al votar reporte:', e.message);
+    res.redirect('/reportes/' + reporte_id);
+  }
 };
 
 exports.quitarVoto = async (req, res) => {

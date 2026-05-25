@@ -17,7 +17,11 @@ exports.listar = async (filtros = {}) => {
   if (filtros.estado) query = query.eq('estado', filtros.estado);
   if (filtros.categoria_id) query = query.eq('categoria_id', filtros.categoria_id);
   if (filtros.zona) {
-    const zona = String(filtros.zona).replace(/[%_]/g, '\\$&').trim();
+    const zona = String(filtros.zona)
+      .replace(/\\/g, '\\\\')
+      .replace(/%/g, '\\%')
+      .replace(/_/g, '\\_')
+      .trim();
     query = query.ilike('zona', '%' + zona + '%');
   }
 
