@@ -1,35 +1,8 @@
 const supabase = require('../config/supabase');
 const path = require('path');
+const crypto = require('crypto');
 const ReporteModel = require('../models/reporteModel');
 const CategoriaModel = require('../models/categoriaModel');
-
-const sanitizeFilenameStem = (value) => {
-  const input = String(value || '').slice(0, 120);
-  let output = '';
-  let prevUnderscore = false;
-
-  for (let i = 0; i < input.length; i++) {
-    const ch = input[i];
-    const isAllowed =
-      (ch >= 'a' && ch <= 'z') ||
-      (ch >= 'A' && ch <= 'Z') ||
-      (ch >= '0' && ch <= '9') ||
-      ch === '.' || ch === '-' || ch === '_';
-    const normalized = isAllowed ? ch : '_';
-
-    if (normalized === '_') {
-      if (prevUnderscore) continue;
-      prevUnderscore = true;
-    } else {
-      prevUnderscore = false;
-    }
-    output += normalized;
-  }
-
-  while (output.startsWith('_')) output = output.slice(1);
-  while (output.endsWith('_')) output = output.slice(0, -1);
-  return output;
-};
 
 exports.index = async (req, res) => {
   try {
@@ -86,13 +59,12 @@ exports.store = async (req, res) => {
     // Subir fotos si existen
     if (req.files && req.files.length > 0) {
       const allowedExt = ['.jpg', '.jpeg', '.png', '.webp'];
+      const allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
       for (const file of req.files) {
         const baseName = path.basename(file.originalname);
         const ext = path.extname(baseName).toLowerCase();
-        if (!allowedExt.includes(ext)) continue;
-        const nameOnly = path.basename(baseName, ext);
-        const safeOriginalName = sanitizeFilenameStem(nameOnly);
-        const filename = Date.now() + '_' + (safeOriginalName || 'imagen') + ext;
+        if (!allowedExt.includes(ext) || !allowedMime.includes(file.mimetype)) continue;
+        const filename = Date.now() + '_' + crypto.randomUUID() + ext;
         await supabase.storage.from('fotos-reportes')
           .upload(filename, file.buffer, { contentType: file.mimetype });
         const { data: { publicUrl } } = supabase.storage
