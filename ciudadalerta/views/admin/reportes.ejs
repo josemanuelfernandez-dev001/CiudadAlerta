@@ -1,5 +1,5 @@
 <%- include('../layout/header') %>
-<h2>Gestion de reportes</h2>
+<h2>Gestión de reportes</h2>
 
 <form class="filtros" method="GET" action="/admin/reportes">
   <input type="text" name="zona" placeholder="Zona" value="<%= filtros?.zona || '' %>" />
@@ -26,7 +26,7 @@
 </form>
 
 <table class="tabla-admin">
-  <thead><tr><th>Titulo</th><th>Estado</th><th>Zona</th><th>Votos</th><th>Fecha</th><th>Acciones</th></tr></thead>
+  <thead><tr><th>Título</th><th>Estado</th><th>Zona</th><th>Votos</th><th>Fecha</th><th>Acciones</th></tr></thead>
   <tbody>
   <% if (!reportes || reportes.length === 0) { %>
     <tr><td colspan="6" class="empty">No hay reportes para mostrar.</td></tr>
@@ -53,7 +53,7 @@
           <button class="btn-primary" type="submit">Guardar</button>
         </form>
         <form action="/admin/reportes/<%= r.id %>/eliminar" method="POST" style="display:inline-block;">
-          <button class="btn-danger" type="submit">Eliminar</button>
+          <button class="btn-danger" type="submit" onclick="return confirm('¿Seguro que deseas eliminar este reporte?');">Eliminar</button>
         </form>
       </td>
     </tr>

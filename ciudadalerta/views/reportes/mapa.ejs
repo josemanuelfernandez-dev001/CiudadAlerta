@@ -24,7 +24,14 @@
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(mapa);
 
-  const reportes = <%- JSON.stringify(reportes || []).replace(/</g, '\\u003c') %>;
+  const reportes = JSON.parse('<%- JSON.stringify(reportes || [])
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029') %>');
   const bounds = [];
   reportes.forEach((r) => {
     const lat = Number(r.latitud);
