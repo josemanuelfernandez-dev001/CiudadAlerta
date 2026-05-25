@@ -1,0 +1,32 @@
+<%- include('../layout/header') %>
+
+<section>
+  <h1>Mis notificaciones</h1>
+  <% if (!notifs || notifs.length === 0) { %>
+    <p>No tienes notificaciones.</p>
+  <% } else { %>
+    <ul>
+      <% notifs.forEach(n => { %>
+        <li>
+          <strong><%= n.leida ? 'Leída' : 'Nueva' %>:</strong>
+          <%= n.mensaje %>
+          <% if (n.reportes && n.reportes.titulo) { %>
+            — <a href="/reportes/<%= n.reporte_id %>"><%= n.reportes.titulo %></a>
+          <% } %>
+          <% if (!n.leida) { %>
+            <form action="/notificaciones/<%= n.id %>/leida" method="POST" style="display:inline;">
+              <button
+                type="submit"
+                aria-label="Marcar como leída"
+              >
+                Marcar leída
+              </button>
+            </form>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<%- include('../layout/footer') %>

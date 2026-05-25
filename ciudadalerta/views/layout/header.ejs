@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CiudadAlerta</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/reportes">Reportes</a>
+      <% if (usuario) { %>
+        <a href="/reportes/nuevo">Nuevo reporte</a>
+        <a href="/perfil">Perfil</a>
+        <a href="/notificaciones">Notificaciones</a>
+        <% if (usuario.rol === 'admin') { %>
+          <a href="/admin/dashboard">Admin</a>
+        <% } %>
+        <a href="/auth/logout">Cerrar sesión</a>
+      <% } else { %>
+        <a href="/auth/login">Iniciar sesión</a>
+        <a href="/auth/register">Registrarse</a>
+      <% } %>
+    </nav>
+  </header>
+  <main>
