@@ -97,8 +97,13 @@ exports.eliminarReporte = async (req, res) => {
 };
 
 exports.listarCategorias = async (req, res) => {
-  const categorias = await CategoriaModel.listarTodas();
-  res.render('admin/categorias', { categorias, error: null });
+  try {
+    const categorias = await CategoriaModel.listarTodas();
+    res.render('admin/categorias', { categorias, error: null });
+  } catch (e) {
+    console.error('Error al listar categorías:', e);
+    res.status(500).send('Error al listar categorías');
+  }
 };
 
 exports.crearCategoria = async (req, res) => {

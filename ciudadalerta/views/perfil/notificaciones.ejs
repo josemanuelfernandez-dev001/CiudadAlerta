@@ -15,7 +15,12 @@
           <% } %>
           <% if (!n.leida) { %>
             <form action="/notificaciones/<%= n.id %>/leida" method="POST" style="display:inline;">
-              <button type="submit">Marcar leída</button>
+              <button
+                type="submit"
+                aria-label="Marcar como leída: <%= String(n.mensaje || '').slice(0, 50) %>"
+              >
+                Marcar leída
+              </button>
             </form>
           <% } %>
         </li>

@@ -3,7 +3,7 @@
 <section>
   <h1>Crear cuenta</h1>
   <% if (error) { %>
-    <p><%= error %></p>
+    <div role="alert"><%= error %></div>
   <% } %>
   <form method="POST" action="/auth/register">
     <label for="nombre">Nombre</label>

@@ -3,7 +3,7 @@
 <section>
   <h1>Iniciar sesión</h1>
   <% if (error) { %>
-    <p><%= error %></p>
+    <div role="alert"><%= error %></div>
   <% } %>
   <form method="POST" action="/auth/login">
     <label for="email">Email</label>
