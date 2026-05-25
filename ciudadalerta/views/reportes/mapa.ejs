@@ -32,16 +32,22 @@
     .replace(/&/g, '\\u0026')
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029') %>');
+  const escapeHtml = (value) => String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
   const bounds = [];
   reportes.forEach((r) => {
     const lat = Number(r.latitud);
     const lng = Number(r.longitud);
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
     const popup = `
-      <strong>${r.titulo || 'Reporte'}</strong><br/>
-      Estado: ${(r.estado || 'pendiente').replace('_', ' ')}<br/>
-      ${r.zona ? `Zona: ${r.zona}<br/>` : ''}
-      <a href="/reportes/${r.id}">Ver detalle</a>
+      <strong>${escapeHtml(r.titulo || 'Reporte')}</strong><br/>
+      Estado: ${escapeHtml((r.estado || 'pendiente').replace('_', ' '))}<br/>
+      ${r.zona ? `Zona: ${escapeHtml(r.zona)}<br/>` : ''}
+      <a href="/reportes/${encodeURIComponent(String(r.id || ''))}">Ver detalle</a>
     `;
     L.marker([lat, lng]).addTo(mapa).bindPopup(popup);
     bounds.push([lat, lng]);
