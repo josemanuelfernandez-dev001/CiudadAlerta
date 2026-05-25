@@ -5,8 +5,8 @@ const NotificacionModel = require('../models/notificacionModel');
 
 exports.dashboard = async (req, res) => {
   try {
-    const totalRes = await supabase.from('reportes').select(`estado, zona, categoria_id, created_at,
-      categorias(nombre)`, { count: 'exact' });
+    const totalRes = await supabase.from('reportes')
+      .select('estado, zona, categoria_id, created_at, categorias(nombre)', { count: 'exact' });
 
     const reportes = totalRes.data || [];
     const stats = {

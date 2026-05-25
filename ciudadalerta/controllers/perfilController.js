@@ -6,10 +6,12 @@ exports.index = (req, res) => {
 
 exports.misReportes = async (req, res) => {
   try {
-    const { data: reportes } = await supabase.from('reportes')
+    const { data: reportes, error } = await supabase.from('reportes')
       .select('*, categorias(nombre, color_hex)')
       .eq('usuario_id', req.session.usuario.id)
       .order('created_at', { ascending: false });
+    if (error) throw error;
+
     res.render('perfil/mis-reportes', { reportes: reportes || [] });
   } catch (e) {
     console.error('Error al listar mis reportes:', e);
