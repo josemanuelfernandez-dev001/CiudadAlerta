@@ -4,7 +4,7 @@ const ReporteModel = require('../models/reporteModel');
 const CategoriaModel = require('../models/categoriaModel');
 
 const sanitizeFilenameStem = (value) => {
-  const input = String(value || '');
+  const input = String(value || '').slice(0, 120);
   let output = '';
   let prevUnderscore = false;
 
@@ -71,10 +71,16 @@ exports.nuevo = async (req, res) => {
 exports.store = async (req, res) => {
   const { titulo, descripcion, categoria_id, latitud, longitud, zona } = req.body;
   const usuario_id = req.session.usuario.id;
+  const lat = parseFloat(latitud);
+  const lng = parseFloat(longitud);
   try {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      throw new Error('Coordenadas inválidas');
+    }
+
     const reporte = await ReporteModel.crear({
-      titulo, descripcion, categoria_id, latitud: parseFloat(latitud),
-      longitud: parseFloat(longitud), zona, usuario_id, estado: 'pendiente'
+      titulo, descripcion, categoria_id, latitud: lat,
+      longitud: lng, zona, usuario_id, estado: 'pendiente'
     });
 
     // Subir fotos si existen
@@ -97,8 +103,9 @@ exports.store = async (req, res) => {
     }
     res.redirect('/reportes/' + reporte.id);
   } catch (e) {
+    console.error('Error al crear reporte:', e);
     const categorias = await CategoriaModel.listarActivas();
-    res.render('reportes/nuevo', { categorias, error: e.message });
+    res.render('reportes/nuevo', { categorias, error: 'No se pudo crear el reporte' });
   }
 };
 
@@ -149,7 +156,6 @@ exports.quitarVoto = async (req, res) => {
       .delete().eq('reporte_id', reporte_id).eq('usuario_id', usuario_id);
   } catch (e) {
     console.error('Error al quitar voto:', e);
-    return res.redirect('/reportes/' + reporte_id);
   }
   res.redirect('/reportes/' + reporte_id);
 };
