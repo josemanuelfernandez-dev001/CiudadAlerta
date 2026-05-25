@@ -5,10 +5,8 @@ const NotificacionModel = require('../models/notificacionModel');
 
 exports.dashboard = async (req, res) => {
   try {
-    const [totalRes] = await Promise.all([
-      supabase.from('reportes').select(`estado, zona, categoria_id, created_at,
-        categorias(nombre)`, { count: 'exact' })
-    ]);
+    const totalRes = await supabase.from('reportes').select(`estado, zona, categoria_id, created_at,
+      categorias(nombre)`, { count: 'exact' });
 
     const reportes = totalRes.data || [];
     const stats = {
@@ -72,7 +70,9 @@ exports.updateEstado = async (req, res) => {
     const mensajes = {
       en_proceso: 'Tu reporte fue recibido y está siendo atendido.',
       resuelto: 'Tu reporte ha sido marcado como resuelto.',
-      rechazado: 'Tu reporte fue revisado y no procede: ' + (comentario || '')
+      rechazado: comentario
+        ? `Tu reporte fue revisado y no procede: ${comentario}`
+        : 'Tu reporte fue revisado y no procede.'
     };
     if (mensajes[estado] && reporte.usuario_id) {
       await NotificacionModel.crear(

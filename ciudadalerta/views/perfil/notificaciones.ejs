@@ -17,7 +17,7 @@
             <form action="/notificaciones/<%= n.id %>/leida" method="POST" style="display:inline;">
               <button
                 type="submit"
-                aria-label="Marcar como leída: <%= String(n.mensaje || '').slice(0, 50) %>"
+                aria-label="Marcar como leída: <%= String(n.mensaje || '') %>"
               >
                 Marcar leída
               </button>
