@@ -3,6 +3,34 @@ const path = require('path');
 const ReporteModel = require('../models/reporteModel');
 const CategoriaModel = require('../models/categoriaModel');
 
+const sanitizeFilenameStem = (value) => {
+  const input = String(value || '');
+  let output = '';
+  let prevUnderscore = false;
+
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i];
+    const isAllowed =
+      (ch >= 'a' && ch <= 'z') ||
+      (ch >= 'A' && ch <= 'Z') ||
+      (ch >= '0' && ch <= '9') ||
+      ch === '.' || ch === '-' || ch === '_';
+    const normalized = isAllowed ? ch : '_';
+
+    if (normalized === '_') {
+      if (prevUnderscore) continue;
+      prevUnderscore = true;
+    } else {
+      prevUnderscore = false;
+    }
+    output += normalized;
+  }
+
+  while (output.startsWith('_')) output = output.slice(1);
+  while (output.endsWith('_')) output = output.slice(0, -1);
+  return output;
+};
+
 exports.index = async (req, res) => {
   try {
     const filtros = {
@@ -13,7 +41,10 @@ exports.index = async (req, res) => {
     const reportes = await ReporteModel.listar(filtros);
     const categorias = await CategoriaModel.listarActivas();
     res.render('reportes/index', { reportes, categorias, filtros });
-  } catch (e) { res.status(500).send('Error al cargar reportes'); }
+  } catch (e) {
+    console.error('Error al cargar reportes:', e);
+    res.status(500).send('Error al cargar reportes');
+  }
 };
 
 exports.mapa = async (req, res) => {
@@ -21,7 +52,10 @@ exports.mapa = async (req, res) => {
     const reportes = await ReporteModel.listar();
     const categorias = await CategoriaModel.listarActivas();
     res.render('reportes/mapa', { reportes, categorias });
-  } catch (e) { res.status(500).send('Error al cargar mapa'); }
+  } catch (e) {
+    console.error('Error al cargar mapa:', e);
+    res.status(500).send('Error al cargar mapa');
+  }
 };
 
 exports.nuevo = async (req, res) => {
@@ -29,6 +63,7 @@ exports.nuevo = async (req, res) => {
     const categorias = await CategoriaModel.listarActivas();
     res.render('reportes/nuevo', { categorias, error: null });
   } catch (e) {
+    console.error('Error al cargar formulario:', e);
     res.status(500).send('Error al cargar formulario');
   }
 };
@@ -50,10 +85,7 @@ exports.store = async (req, res) => {
         const ext = path.extname(baseName).toLowerCase();
         if (!allowedExt.includes(ext)) continue;
         const nameOnly = path.basename(baseName, ext);
-        const safeOriginalName = nameOnly
-          .replace(/[^a-zA-Z0-9._-]/g, '_')
-          .replace(/_+/g, '_')
-          .replace(/^_+|_+$/g, '');
+        const safeOriginalName = sanitizeFilenameStem(nameOnly);
         const filename = Date.now() + '_' + (safeOriginalName || 'imagen') + ext;
         await supabase.storage.from('fotos-reportes')
           .upload(filename, file.buffer, { contentType: file.mimetype });
@@ -78,7 +110,11 @@ exports.show = async (req, res) => {
       ? reporte.votos.some(v => v.usuario_id === usuario.id)
       : false;
     res.render('reportes/detalle', { reporte, usuario, yaVoto });
-  } catch (e) { res.status(404).send('Reporte no encontrado'); }
+  } catch (e) {
+    if (e && e.code === 'PGRST116') return res.status(404).send('Reporte no encontrado');
+    console.error('Error al cargar detalle de reporte:', e);
+    res.status(500).send('Error al cargar reporte');
+  }
 };
 
 exports.update = async (req, res) => {
@@ -87,7 +123,10 @@ exports.update = async (req, res) => {
     await ReporteModel.actualizar(req.params.id,
       { titulo, descripcion, categoria_id, zona, updated_at: new Date() });
     res.redirect('/reportes/' + req.params.id);
-  } catch (e) { res.status(500).send('Error al actualizar reporte'); }
+  } catch (e) {
+    console.error('Error al actualizar reporte:', e);
+    res.status(500).send('Error al actualizar reporte');
+  }
 };
 
 exports.votar = async (req, res) => {
@@ -97,7 +136,7 @@ exports.votar = async (req, res) => {
     await supabase.from('votos').insert({ reporte_id, usuario_id });
     res.redirect('/reportes/' + reporte_id);
   } catch (e) {
-    console.error('Error al votar reporte:', e.message);
+    console.error('Error al votar reporte:', e);
     res.redirect('/reportes/' + reporte_id);
   }
 };
@@ -109,6 +148,7 @@ exports.quitarVoto = async (req, res) => {
     await supabase.from('votos')
       .delete().eq('reporte_id', reporte_id).eq('usuario_id', usuario_id);
   } catch (e) {
+    console.error('Error al quitar voto:', e);
     return res.redirect('/reportes/' + reporte_id);
   }
   res.redirect('/reportes/' + reporte_id);
