@@ -11,6 +11,11 @@ const perfilRoutes = require('./routes/perfil');
 const notifRoutes  = require('./routes/notificaciones');
 
 const app = express();
+const port = process.env.PORT || 3000;
+
+if (!process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET no está definido en el archivo .env');
+}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +29,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 8 }
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 8,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
 }));
 
 // Hacer el usuario disponible en todas las vistas
@@ -41,6 +51,6 @@ app.use('/notificaciones', notifRoutes);
 
 app.get('/', (req, res) => res.redirect('/reportes'));
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('CiudadAlerta corriendo en puerto ' + process.env.PORT);
+app.listen(port, () => {
+  console.log('CiudadAlerta corriendo en puerto ' + port);
 });
