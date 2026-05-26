@@ -1,26 +1,30 @@
-<%- include('../layout/header') %>
+<%- include('../layout/citizen-header') %>
 
-<section>
-  <h1>Mis notificaciones</h1>
+<section class="page-shell">
+  <header class="page-hero">
+    <div>
+      <h1>Notificaciones</h1>
+      <p>Estado de tus reportes y novedades municipales.</p>
+    </div>
+  </header>
+
   <% if (!notifs || notifs.length === 0) { %>
-    <p>No tienes notificaciones.</p>
+    <section class="panel empty-state">
+      <p>No tienes notificaciones por ahora.</p>
+    </section>
   <% } else { %>
-    <ul>
+    <ul class="notif-list">
       <% notifs.forEach(n => { %>
-        <li>
-          <strong><%= n.leida ? 'Leída' : 'Nueva' %>:</strong>
-          <%= n.mensaje %>
-          <% if (n.reportes && n.reportes.titulo) { %>
-            — <a href="/reportes/<%= n.reporte_id %>"><%= n.reportes.titulo %></a>
-          <% } %>
+        <li class="notif-item <%= n.leida ? '' : 'new' %>">
+          <div>
+            <p><strong><%= n.leida ? 'Leída' : 'Nueva' %>:</strong> <%= n.mensaje %></p>
+            <% if (n.reportes && n.reportes.titulo) { %>
+              <p class="card-meta">Reporte: <a href="/reportes/<%= n.reporte_id %>"><%= n.reportes.titulo %></a></p>
+            <% } %>
+          </div>
           <% if (!n.leida) { %>
-            <form action="/notificaciones/<%= n.id %>/leida" method="POST" style="display:inline;">
-              <button
-                type="submit"
-                aria-label="Marcar como leída"
-              >
-                Marcar leída
-              </button>
+            <form action="/notificaciones/<%= n.id %>/leida" method="POST">
+              <button class="btn-secondary" type="submit" aria-label="Marcar como leída">Marcar leída</button>
             </form>
           <% } %>
         </li>
@@ -29,4 +33,4 @@
   <% } %>
 </section>
 
-<%- include('../layout/footer') %>
+<%- include('../layout/citizen-footer') %>

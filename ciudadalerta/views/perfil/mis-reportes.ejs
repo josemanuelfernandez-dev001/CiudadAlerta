@@ -1,28 +1,33 @@
-<%- include('../layout/header') %>
+<%- include('../layout/citizen-header') %>
 
-<section class="page-header">
+<section class="page-shell">
+  <header class="page-hero">
     <div>
-        <h1>Mis reportes</h1>
-        <p>Listado de los reportes creados con tu cuenta.</p>
+      <h1>Mis reportes</h1>
+      <p>Seguimiento de incidencias enviadas desde tu cuenta.</p>
     </div>
+    <a class="btn" href="/reportes/nuevo">Nuevo reporte</a>
+  </header>
+
+  <% if (!reportes || reportes.length === 0) { %>
+    <section class="panel empty-state">
+      <p>Aún no has creado reportes.</p>
+    </section>
+  <% } else { %>
+    <section class="reportes-grid">
+      <% reportes.forEach(r => { %>
+        <a class="reporte-card" href="/reportes/<%= r.id %>">
+          <span class="badge estado-<%= r.estado %>"><%= (r.estado || '').replace('_', ' ') %></span>
+          <h3><%= r.titulo %></h3>
+          <p class="card-meta">
+            <%= r.categorias?.nombre || 'Sin categoría' %>
+            <% if (r.zona) { %> · <%= r.zona %><% } %>
+          </p>
+          <p class="card-fecha"><%= new Date(r.created_at).toLocaleDateString('es-BO') %></p>
+        </a>
+      <% }) %>
+    </section>
+  <% } %>
 </section>
 
-<% if (!reportes || reportes.length === 0) { %>
-    <p class="empty">Aún no has creado reportes.</p>
-<% } else { %>
-    <section class="reportes-grid">
-        <% reportes.forEach(r => { %>
-            <a class="reporte-card" href="/reportes/<%= r.id %>">
-                <span class="card-estado estado-<%= r.estado %>"><%= (r.estado || '').replace('_', ' ') %></span>
-                <h3><%= r.titulo %></h3>
-                <p class="card-meta">
-                    <%= r.categorias?.nombre || 'Sin categoría' %>
-                    <% if (r.zona) { %> · <%= r.zona %><% } %>
-                </p>
-                <p class="card-fecha"><%= new Date(r.created_at).toLocaleDateString('es-BO') %></p>
-            </a>
-        <% }) %>
-    </section>
-<% } %>
-
-<%- include('../layout/footer') %>
+<%- include('../layout/citizen-footer') %>

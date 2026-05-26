@@ -1,61 +1,24 @@
-<%- include('../layout/header') %>
-<h2>Mapa de reportes — Tarija</h2>
+<%- include('../layout/citizen-header') %>
 
-<div id="mapa-general" style="height: 520px; border: 1px solid #ccc; margin-bottom: 16px;"></div>
+<section class="page-shell">
+  <header class="page-hero">
+    <div>
+      <h1>Mapa ciudadano</h1>
+      <p>Visualiza incidencias activas y abre el detalle de cada reporte.</p>
+    </div>
+  </header>
 
-<p class="hint">Selecciona un marcador para ver el detalle del reporte.</p>
+  <section class="panel">
+    <div id="mapa" class="map-box" style="min-height: 520px;"></div>
+    <p class="hint">Selecciona un marcador para ver el reporte completo.</p>
+  </section>
+</section>
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin=""
-/>
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""
-></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  const tarija = [-21.5355, -64.7296];
-  const mapa = L.map('mapa-general').setView(tarija, 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(mapa);
-
-  const reportes = JSON.parse('<%- JSON.stringify(reportes || [])
-    .replace(/\\/g, '\\\\')
-    .replace(/'/g, "\\'")
-    .replace(/</g, '\\u003c')
-    .replace(/>/g, '\\u003e')
-    .replace(/&/g, '\\u0026')
-    .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029') %>');
-  const escapeHtml = (value) => String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-  const bounds = [];
-  reportes.forEach((r) => {
-    const lat = Number(r.latitud);
-    const lng = Number(r.longitud);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-    const popup = `
-      <strong>${escapeHtml(r.titulo || 'Reporte')}</strong><br/>
-      Estado: ${escapeHtml((r.estado || 'pendiente').replace('_', ' '))}<br/>
-      ${r.zona ? `Zona: ${escapeHtml(r.zona)}<br/>` : ''}
-      <a href="/reportes/${encodeURIComponent(String(r.id || ''))}">Ver detalle</a>
-    `;
-    L.marker([lat, lng]).addTo(mapa).bindPopup(popup);
-    bounds.push([lat, lng]);
-  });
-
-  if (bounds.length > 0) {
-    mapa.fitBounds(bounds, { padding: [20, 20] });
-  }
+  window.__REPORTES__ = <%- JSON.stringify(reportes || []) %>;
 </script>
+<script src="/js/mapa.js"></script>
 
-<%- include('../layout/footer') %>
+<%- include('../layout/citizen-footer') %>

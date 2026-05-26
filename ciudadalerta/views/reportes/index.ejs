@@ -1,65 +1,87 @@
-<%- include('../layout/header') %>
+<%- include('../layout/citizen-header') %>
 
-<section class="page-header">
-  <h2>Reportes ciudadanos</h2>
-  <div>
-    <a class="btn-primary" href="/reportes/mapa">Ver mapa</a>
-    <% if (usuario) { %>
-      <a class="btn-primary" href="/reportes/nuevo">Nuevo reporte</a>
-    <% } %>
-  </div>
+<section class="page-shell">
+  <header class="page-hero">
+    <div>
+      <h1>Reportes ciudadanos</h1>
+      <p>Comparte incidencias de tu barrio y sigue su atención en Tarija.</p>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-secondary" href="/reportes/mapa">Ver mapa</a>
+      <% if (usuario) { %>
+        <a class="btn" href="/reportes/nuevo">Crear reporte</a>
+      <% } else { %>
+        <a class="btn" href="/auth/login">Ingresa para reportar</a>
+      <% } %>
+    </div>
+  </header>
+
+  <form class="panel filter-grid" method="GET" action="/reportes">
+    <div>
+      <label for="zona">Zona</label>
+      <input id="zona" type="text" name="zona" placeholder="Ej. Las Panosas" value="<%= filtros?.zona || '' %>" />
+    </div>
+
+    <div>
+      <label for="estado">Estado</label>
+      <select id="estado" name="estado">
+        <option value="">Todos los estados</option>
+        <% ['pendiente', 'en_proceso', 'resuelto', 'rechazado'].forEach(estado => { %>
+          <option value="<%= estado %>" <%= filtros?.estado === estado ? 'selected' : '' %>>
+            <%= estado.replace('_', ' ') %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div>
+      <label for="categoria_id">Categoría</label>
+      <select id="categoria_id" name="categoria_id">
+        <option value="">Todas</option>
+        <% (categorias || []).forEach(c => { %>
+          <option value="<%= c.id %>" <%= String(filtros?.categoria_id || '') === String(c.id) ? 'selected' : '' %>>
+            <%= c.nombre %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div>
+      <label>&nbsp;</label>
+      <button class="btn" type="submit">Aplicar filtros</button>
+    </div>
+  </form>
+
+  <% if (!reportes || reportes.length === 0) { %>
+    <section class="panel empty-state">
+      <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <circle cx="60" cy="60" r="52" fill="#fff3de" />
+        <path d="M30 78h60M36 69h48M40 60h40" stroke="#c18b49" stroke-width="6" stroke-linecap="round" />
+        <path d="M52 36h16l4 16H48z" fill="#8f1d3f" />
+      </svg>
+      <p>No encontramos reportes con esos filtros.</p>
+    </section>
+  <% } else { %>
+    <section class="reportes-grid">
+      <% reportes.forEach(r => { %>
+        <% const votosCount = Array.isArray(r.votos) ? (r.votos[0]?.count ?? r.votos.length) : 0; %>
+        <a class="reporte-card" href="/reportes/<%= r.id %>">
+          <span class="badge estado-<%= r.estado %>">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="currentColor" /></svg>
+            <%= (r.estado || '').replace('_', ' ') %>
+          </span>
+          <h3><%= r.titulo %></h3>
+          <p class="card-meta">
+            <% if (r.categorias?.color_hex) { %><span class="category-color" style="background:<%= r.categorias.color_hex %>"></span><% } %>
+            <%= r.categorias?.nombre || 'Sin categoría' %>
+            <% if (r.zona) { %> · <%= r.zona %><% } %>
+          </p>
+          <p class="card-fecha"><%= new Date(r.created_at).toLocaleDateString('es-BO') %></p>
+          <p class="card-votos">Apoyos ciudadanos: <strong><%= votosCount %></strong></p>
+        </a>
+      <% }) %>
+    </section>
+  <% } %>
 </section>
 
-<form class="filtros" method="GET" action="/reportes">
-  <input
-    type="text"
-    name="zona"
-    placeholder="Filtrar por zona"
-    value="<%= filtros?.zona || '' %>"
-  />
-
-  <select name="estado">
-    <option value="">Todos los estados</option>
-    <% ['pendiente', 'en_proceso', 'resuelto', 'rechazado'].forEach(estado => { %>
-      <option value="<%= estado %>" <%= filtros?.estado === estado ? 'selected' : '' %>>
-        <%= estado.replace('_', ' ') %>
-      </option>
-    <% }) %>
-  </select>
-
-  <select name="categoria_id">
-    <option value="">Todas las categorías</option>
-    <% (categorias || []).forEach(c => { %>
-      <option value="<%= c.id %>" <%= String(filtros?.categoria_id || '') === String(c.id) ? 'selected' : '' %>>
-        <%= c.nombre %>
-      </option>
-    <% }) %>
-  </select>
-
-  <button type="submit">Filtrar</button>
-</form>
-
-<% if (!reportes || reportes.length === 0) { %>
-  <p class="empty">Aún no hay reportes para estos filtros.</p>
-<% } else { %>
-  <section class="reportes-grid">
-    <% reportes.forEach(r => { %>
-      <% const votosCount = Array.isArray(r.votos) ? (r.votos[0]?.count ?? r.votos.length) : 0; %>
-      <a class="reporte-card" href="/reportes/<%= r.id %>">
-        <span class="card-estado estado-<%= r.estado %>"><%= r.estado.replace('_', ' ') %></span>
-        <h3><%= r.titulo %></h3>
-        <p class="card-meta">
-          <% if (r.categorias?.color_hex) { %>
-            <span class="cat-dot" style="background:<%= r.categorias.color_hex %>"></span>
-          <% } %>
-          <%= r.categorias?.nombre || 'Sin categoría' %>
-          <% if (r.zona) { %> · <%= r.zona %><% } %>
-        </p>
-        <p class="card-fecha"><%= new Date(r.created_at).toLocaleDateString('es-BO') %></p>
-        <p class="card-votos">Votos: <%= votosCount %></p>
-      </a>
-    <% }) %>
-  </section>
-<% } %>
-
-<%- include('../layout/footer') %>
+<%- include('../layout/citizen-footer') %>
