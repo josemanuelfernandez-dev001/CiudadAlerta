@@ -1,0 +1,57 @@
+<%- include('../layout/header') %>
+
+<section class="page-header">
+    <div>
+        <h1>Categorías</h1>
+        <p>Administración de categorías activas.</p>
+    </div>
+</section>
+
+<% if (error) { %>
+    <p class="error"><%= error %></p>
+<% } %>
+
+<section class="card">
+    <h2>Nueva categoría</h2>
+    <form method="POST" action="/admin/categorias">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" type="text" required />
+
+        <label for="icono">Icono</label>
+        <input id="icono" name="icono" type="text" placeholder="💡" />
+
+        <label for="color_hex">Color HEX</label>
+        <input id="color_hex" name="color_hex" type="text" placeholder="#3B82F6" />
+
+        <label for="competencia">Competencia</label>
+        <input id="competencia" name="competencia" type="text" required />
+
+        <button type="submit">Crear categoría</button>
+    </form>
+</section>
+
+<section class="card">
+    <h2>Categorías existentes</h2>
+    <% if (!categorias || categorias.length === 0) { %>
+        <p class="empty">No hay categorías.</p>
+    <% } else { %>
+        <table class="tabla-admin">
+            <thead>
+            <tr><th>Nombre</th><th>Icono</th><th>Color</th><th>Competencia</th><th>Activa</th></tr>
+            </thead>
+            <tbody>
+            <% categorias.forEach(c => { %>
+                <tr>
+                    <td><%= c.nombre %></td>
+                    <td><%= c.icono || '—' %></td>
+                    <td><span style="display:inline-block;width:1rem;height:1rem;background:<%= c.color_hex %>"></span> <%= c.color_hex %></td>
+                    <td><%= c.competencia %></td>
+                    <td><%= c.activa ? 'Sí' : 'No' %></td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</section>
+
+<%- include('../layout/footer') %>
