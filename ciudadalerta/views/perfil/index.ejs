@@ -1,0 +1,32 @@
+<%- include('../layout/header') %>
+
+<section class="page-header">
+    <div>
+        <h1>Mi perfil</h1>
+        <p>Información de tu cuenta y actividad.</p>
+    </div>
+</section>
+
+<section class="perfil-panel">
+    <div class="card">
+        <h2>Datos de usuario</h2>
+        <% if (usuario) { %>
+            <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
+            <p><strong>Email:</strong> <%= usuario.email %></p>
+            <p><strong>Rol:</strong> <%= usuario.rol %></p>
+        <% } else { %>
+            <p>No hay sesión activa.</p>
+        <% } %>
+    </div>
+
+    <div class="card">
+        <h2>Actualizar nombre</h2>
+        <form method="POST" action="/perfil">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" name="nombre" type="text" required value="<%= usuario?.nombre || '' %>" />
+            <button type="submit">Guardar cambios</button>
+        </form>
+    </div>
+</section>
+
+<%- include('../layout/footer') %>
