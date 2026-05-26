@@ -1,0 +1,72 @@
+<%- include('../layout/header') %>
+
+<section class="page-header">
+    <div>
+        <h1>Detalle del reporte</h1>
+        <% if (reporte) { %>
+            <p><%= reporte.zona || 'Ubicación no especificada' %></p>
+        <% } %>
+    </div>
+</section>
+
+<% if (!reporte) { %>
+    <p class="empty">Reporte no encontrado.</p>
+<% } else { %>
+    <article class="card detalle-reporte">
+        <span class="card-estado estado-<%= reporte.estado %>"><%= (reporte.estado || '').replace('_', ' ') %></span>
+        <h2><%= reporte.titulo %></h2>
+        <p><strong>Categoría:</strong> <%= reporte.categorias?.nombre || 'Sin categoría' %></p>
+        <p><strong>Zona:</strong> <%= reporte.zona || '—' %></p>
+        <p><strong>Descripción:</strong></p>
+        <p><%= reporte.descripcion %></p>
+
+        <hr />
+
+        <p><strong>Autor:</strong> <%= reporte.usuarios?.nombre || 'Desconocido' %></p>
+        <p><strong>Email:</strong> <%= reporte.usuarios?.email || '—' %></p>
+        <p><strong>Votos:</strong> <%= Array.isArray(reporte.votos) ? reporte.votos.length : 0 %></p>
+        <p><strong>Fecha:</strong> <%= new Date(reporte.created_at).toLocaleString('es-BO') %></p>
+
+        <% if (reporte.fotos_reporte && reporte.fotos_reporte.length > 0) { %>
+            <div class="galeria-fotos">
+                <% reporte.fotos_reporte.forEach(foto => { %>
+                    <a href="<%= foto.url_imagen %>" target="_blank" rel="noopener noreferrer">
+                        <img src="<%= foto.url_imagen %>" alt="Foto del reporte" />
+                    </a>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <% if (reporte.historial_estados && reporte.historial_estados.length > 0) { %>
+            <h3>Historial de estados</h3>
+            <ul>
+                <% reporte.historial_estados.forEach(h => { %>
+                    <li>
+                        <strong><%= h.estado_anterior || 'inicio' %> → <%= h.estado_nuevo %></strong>
+                        <span>por <%= h.usuarios?.nombre || 'admin' %></span>
+                        <% if (h.comentario) { %>
+                            <p><%= h.comentario %></p>
+                        <% } %>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } %>
+
+        <% if (usuario) { %>
+            <div class="acciones-reporte">
+                <% if (yaVoto) { %>
+                    <form action="/reportes/<%= reporte.id %>/votar" method="POST">
+                        <input type="hidden" name="_method" value="DELETE" />
+                        <button type="submit">Quitar voto</button>
+                    </form>
+                <% } else { %>
+                    <form action="/reportes/<%= reporte.id %>/votar" method="POST">
+                        <button type="submit">Votar</button>
+                    </form>
+                <% } %>
+            </div>
+        <% } %>
+    </article>
+<% } %>
+
+<%- include('../layout/footer') %>
