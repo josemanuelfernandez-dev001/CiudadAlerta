@@ -1,0 +1,45 @@
+<%- include('../layout/header') %>
+<h2>Panel de gestión — CiudadAlerta Tarija</h2>
+
+<section class="stats-grid">
+  <article class="stat-card">
+    <span class="stat-num"><%= stats?.total || 0 %></span>
+    <small>Total</small>
+  </article>
+  <article class="stat-card">
+    <span class="stat-num"><%= stats?.pendientes || 0 %></span>
+    <small>Pendientes</small>
+  </article>
+  <article class="stat-card">
+    <span class="stat-num"><%= stats?.en_proceso || 0 %></span>
+    <small>En proceso</small>
+  </article>
+  <article class="stat-card">
+    <span class="stat-num"><%= stats?.resueltos || 0 %></span>
+    <small>Resueltos</small>
+  </article>
+  <article class="stat-card">
+    <span class="stat-num"><%= stats?.rechazados || 0 %></span>
+    <small>Rechazados</small>
+  </article>
+</section>
+
+<h3>Reportes pendientes más antiguos</h3>
+<table class="tabla-admin">
+  <thead><tr><th>Título</th><th>Zona</th><th>Fecha</th><th>Acción</th></tr></thead>
+  <tbody>
+  <% if (!antiguos || antiguos.length === 0) { %>
+    <tr><td colspan="4" class="empty">No hay reportes pendientes.</td></tr>
+  <% } %>
+  <% (antiguos || []).forEach(r => { %>
+    <tr>
+      <td><%= r.titulo %></td>
+      <td><%= r.zona || '—' %></td>
+      <td><%= new Date(r.created_at).toLocaleDateString('es-BO') %></td>
+      <td><a href="/reportes/<%= r.id %>">Ver</a></td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+<p style="margin-top: 12px;"><a href="/admin/reportes">Ver todos los reportes</a></p>
+<%- include('../layout/footer') %>

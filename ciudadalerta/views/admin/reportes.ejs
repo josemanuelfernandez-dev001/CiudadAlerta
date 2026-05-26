@@ -1,0 +1,63 @@
+<%- include('../layout/header') %>
+<h2>Gestión de reportes</h2>
+
+<form class="filtros" method="GET" action="/admin/reportes">
+  <input type="text" name="zona" placeholder="Zona" value="<%= filtros?.zona || '' %>" />
+
+  <select name="estado">
+    <option value="">Todos los estados</option>
+    <% ['pendiente', 'en_proceso', 'resuelto', 'rechazado'].forEach(estado => { %>
+      <option value="<%= estado %>" <%= filtros?.estado === estado ? 'selected' : '' %>>
+        <%= estado.replace('_', ' ') %>
+      </option>
+    <% }) %>
+  </select>
+
+  <select name="categoria_id">
+    <option value="">Todas las categorías</option>
+    <% (categorias || []).forEach(c => { %>
+      <option value="<%= c.id %>" <%= String(filtros?.categoria_id || '') === String(c.id) ? 'selected' : '' %>>
+        <%= c.nombre %>
+      </option>
+    <% }) %>
+  </select>
+
+  <button type="submit">Filtrar</button>
+</form>
+
+<table class="tabla-admin">
+  <thead><tr><th>Título</th><th>Estado</th><th>Zona</th><th>Votos</th><th>Fecha</th><th>Acciones</th></tr></thead>
+  <tbody>
+  <% if (!reportes || reportes.length === 0) { %>
+    <tr><td colspan="6" class="empty">No hay reportes para mostrar.</td></tr>
+  <% } %>
+  <% (reportes || []).forEach(r => { %>
+    <% const votosCount = Array.isArray(r.votos) ? (r.votos[0]?.count ?? r.votos.length) : 0; %>
+    <tr>
+      <td><a href="/reportes/<%= r.id %>"><%= r.titulo %></a></td>
+      <td><span class="badge estado-<%= r.estado %>"><%= (r.estado || '').replace('_', ' ') %></span></td>
+      <td><%= r.zona || '—' %></td>
+      <td><%= votosCount %></td>
+      <td><%= new Date(r.created_at).toLocaleDateString('es-BO') %></td>
+      <td>
+        <form action="/admin/reportes/<%= r.id %>/estado" method="POST" style="display:inline-block;">
+          <select name="estado" required>
+            <% ['pendiente', 'en_proceso', 'resuelto', 'rechazado'].forEach(estado => { %>
+              <option value="<%= estado %>" <%= r.estado === estado ? 'selected' : '' %>>
+                <%= estado.replace('_', ' ') %>
+              </option>
+            <% }) %>
+          </select>
+          <input type="text" name="comentario" placeholder="Comentario (opcional)" />
+          <input type="text" name="area_asignada" placeholder="Área (opcional)" />
+          <button class="btn-primary" type="submit">Guardar</button>
+        </form>
+        <form action="/admin/reportes/<%= r.id %>/eliminar" method="POST" style="display:inline-block;">
+          <button class="btn-danger" type="submit" onclick="return confirm('¿Seguro que deseas eliminar este reporte?');">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+<%- include('../layout/footer') %>
