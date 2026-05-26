@@ -2,7 +2,10 @@ const supabase = require('../config/supabase');
 
 exports.crear = async (datos) => {
   const { data, error } = await supabase
-    .from('reportes').insert(datos).select().single();
+    .from('reportes')
+    .insert(datos)
+    .select()
+    .single();
   if (error) throw error;
   return data;
 };
@@ -10,7 +13,7 @@ exports.crear = async (datos) => {
 exports.listar = async (filtros = {}) => {
   let query = supabase.from('reportes')
     .select(`*, categorias(nombre, color_hex, competencia),
-             usuarios(nombre),
+             usuarios!reportes_usuario_id_fkey(nombre),
              votos(count)`)
     .order('created_at', { ascending: false });
 
@@ -34,10 +37,10 @@ exports.buscarPorId = async (id) => {
   const { data, error } = await supabase
     .from('reportes')
     .select(`*, categorias(nombre, color_hex, competencia),
-             usuarios(nombre, email),
+             usuarios!reportes_usuario_id_fkey(nombre, email),
              fotos_reporte(url_imagen),
              historial_estados(estado_anterior, estado_nuevo,
-               comentario, created_at, usuarios(nombre)),
+               comentario, created_at, usuarios!historial_estados_admin_id_fkey(nombre)),
              votos(usuario_id)`)
     .eq('id', id)
     .single();
@@ -47,7 +50,11 @@ exports.buscarPorId = async (id) => {
 
 exports.actualizar = async (id, datos) => {
   const { data, error } = await supabase
-    .from('reportes').update(datos).eq('id', id).select().single();
+    .from('reportes')
+    .update(datos)
+    .eq('id', id)
+    .select()
+    .single();
   if (error) throw error;
   return data;
 };
