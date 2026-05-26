@@ -1,0 +1,32 @@
+<%- include('../layout/citizen-header') %>
+
+<section class="page-shell">
+  <header class="page-hero">
+    <div>
+      <h1>Reportes ciudadanos</h1>
+      <p>Comparte incidencias de tu barrio y sigue su atención en Tarija.</p>
+    </div>
+    <div class="hero-actions">
+      <a class="btn-secondary" href="/reportes/mapa">Ver mapa</a>
+      <% if (usuario) { %>
+        <a class="btn" href="/reportes/nuevo">Crear reporte</a>
+      <% } else { %>
+        <a class="btn" href="/auth/login">Ingresa para reportar</a>
+      <% } %>
+    </div>
+  </header>
+
+  <%- include('../../shared/components/report-filters', { action: '/reportes', categorias, filtros, submitLabel: 'Aplicar filtros', allStatesLabel: 'Todos los estados' }) %>
+
+  <% if (!reportes || reportes.length === 0) { %>
+    <%- include('../../shared/components/empty-state', { icon: 'reportes', message: 'No encontramos reportes con esos filtros.' }) %>
+  <% } else { %>
+    <section class="reportes-grid">
+      <% reportes.forEach(reporte => { %>
+        <%- include('../../shared/components/report-card', { reporte }) %>
+      <% }) %>
+    </section>
+  <% } %>
+</section>
+
+<%- include('../layout/citizen-footer') %>

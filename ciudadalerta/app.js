@@ -40,6 +40,7 @@ app.use(session({
 // Hacer el usuario disponible en todas las vistas
 app.use((req, res, next) => {
   res.locals.usuario = req.session.usuario || null;
+  res.locals.currentPath = req.path;
   next();
 });
 

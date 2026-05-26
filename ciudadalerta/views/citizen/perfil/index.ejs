@@ -23,9 +23,11 @@
 
     <article class="panel">
       <h2>Actualizar nombre</h2>
-      <form method="POST" action="/perfil">
-        <label for="nombre">Nombre</label>
-        <input id="nombre" name="nombre" type="text" required value="<%= usuario?.nombre || '' %>" />
+      <form method="POST" action="/perfil" class="stack">
+        <div>
+          <label for="nombre">Nombre</label>
+          <input id="nombre" name="nombre" type="text" required value="<%= usuario?.nombre || '' %>" />
+        </div>
         <button class="btn" type="submit">Guardar cambios</button>
       </form>
     </article>

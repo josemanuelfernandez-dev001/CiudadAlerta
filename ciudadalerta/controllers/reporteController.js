@@ -13,7 +13,7 @@ exports.index = async (req, res) => {
     };
     const reportes = await ReporteModel.listar(filtros);
     const categorias = await CategoriaModel.listarActivas();
-    res.render('reportes/index', { reportes, categorias, filtros });
+    res.render('citizen/reportes/index', { reportes, categorias, filtros });
   } catch (e) {
     console.error('Error al cargar reportes:', e);
     res.status(500).send('Error al cargar reportes');
@@ -24,7 +24,7 @@ exports.mapa = async (req, res) => {
   try {
     const reportes = await ReporteModel.listar();
     const categorias = await CategoriaModel.listarActivas();
-    res.render('reportes/mapa', { reportes, categorias });
+    res.render('citizen/reportes/mapa', { reportes, categorias });
   } catch (e) {
     console.error('Error al cargar mapa:', e);
     res.status(500).send('Error al cargar mapa');
@@ -34,7 +34,7 @@ exports.mapa = async (req, res) => {
 exports.nuevo = async (req, res) => {
   try {
     const categorias = await CategoriaModel.listarActivas();
-    res.render('reportes/nuevo', { categorias, error: null });
+    res.render('citizen/reportes/nuevo', { categorias, error: null });
   } catch (e) {
     console.error('Error al cargar formulario:', e);
     res.status(500).send('Error al cargar formulario');
@@ -77,7 +77,7 @@ exports.store = async (req, res) => {
   } catch (e) {
     console.error('Error al crear reporte:', e);
     const categorias = await CategoriaModel.listarActivas();
-    res.render('reportes/nuevo', { categorias, error: 'No se pudo crear el reporte' });
+    res.render('citizen/reportes/nuevo', { categorias, error: 'No se pudo crear el reporte' });
   }
 };
 
@@ -88,7 +88,7 @@ exports.show = async (req, res) => {
     const yaVoto = usuario
       ? reporte.votos.some(v => v.usuario_id === usuario.id)
       : false;
-    res.render('reportes/detalle', { reporte, usuario, yaVoto });
+    res.render('citizen/reportes/detalle', { reporte, usuario, yaVoto });
   } catch (e) {
     if (e && e.code === 'PGRST116') return res.status(404).send('Reporte no encontrado');
     console.error('Error al cargar detalle de reporte:', e);

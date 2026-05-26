@@ -1,7 +1,7 @@
 const supabase = require('../config/supabase');
 
 exports.index = (req, res) => {
-  res.render('perfil/index', { usuario: req.session.usuario });
+  res.render('citizen/perfil/index', { usuario: req.session.usuario });
 };
 
 exports.misReportes = async (req, res) => {
@@ -12,7 +12,7 @@ exports.misReportes = async (req, res) => {
       .order('created_at', { ascending: false });
     if (error) throw error;
 
-    res.render('perfil/mis-reportes', { reportes: reportes || [] });
+    res.render('citizen/perfil/mis-reportes', { reportes: reportes || [] });
   } catch (e) {
     console.error('Error al listar mis reportes:', e);
     res.status(500).send('Error al cargar reportes');
