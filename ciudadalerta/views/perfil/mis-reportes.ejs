@@ -1,0 +1,28 @@
+<%- include('../layout/header') %>
+
+<section class="page-header">
+    <div>
+        <h1>Mis reportes</h1>
+        <p>Listado de los reportes creados con tu cuenta.</p>
+    </div>
+</section>
+
+<% if (!reportes || reportes.length === 0) { %>
+    <p class="empty">Aún no has creado reportes.</p>
+<% } else { %>
+    <section class="reportes-grid">
+        <% reportes.forEach(r => { %>
+            <a class="reporte-card" href="/reportes/<%= r.id %>">
+                <span class="card-estado estado-<%= r.estado %>"><%= (r.estado || '').replace('_', ' ') %></span>
+                <h3><%= r.titulo %></h3>
+                <p class="card-meta">
+                    <%= r.categorias?.nombre || 'Sin categoría' %>
+                    <% if (r.zona) { %> · <%= r.zona %><% } %>
+                </p>
+                <p class="card-fecha"><%= new Date(r.created_at).toLocaleDateString('es-BO') %></p>
+            </a>
+        <% }) %>
+    </section>
+<% } %>
+
+<%- include('../layout/footer') %>
