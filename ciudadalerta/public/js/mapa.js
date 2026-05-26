@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const mapEl = document.getElementById('mapa');
+  const mapEl = document.getElementById('mapa-general');
   if (!mapEl || typeof L === 'undefined') return;
 
   const puntos = (window.__REPORTES__ || []).filter((r) =>
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ? [Number(puntos[0].latitud), Number(puntos[0].longitud)]
     : [-21.5355, -64.7296];
 
-  const mapa = L.map('mapa').setView(center, puntos.length > 0 ? 13 : 12);
+  const mapa = L.map(mapEl.id).setView(center, puntos.length > 0 ? 13 : 12);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,

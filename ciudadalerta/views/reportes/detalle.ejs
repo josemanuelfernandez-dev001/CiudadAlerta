@@ -24,7 +24,12 @@
 
         <p class="card-meta">
           <strong>Autor:</strong> <%= reporte.usuarios?.nombre || 'Desconocido' %> ·
-          <strong>Email:</strong> <%= reporte.usuarios?.email || '—' %>
+          <strong>Email:</strong>
+          <% if (usuario && (usuario.rol === 'admin' || usuario.id === reporte.usuario_id)) { %>
+            <%= reporte.usuarios?.email || '—' %>
+          <% } else { %>
+            oculto por privacidad
+          <% } %>
         </p>
         <p class="card-meta"><strong>Fecha:</strong> <%= new Date(reporte.created_at).toLocaleString('es-BO') %></p>
 
