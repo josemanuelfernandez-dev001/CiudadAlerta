@@ -253,20 +253,23 @@ to authenticated
 using (auth.uid() = usuario_id or public.es_admin())
 with check (auth.uid() = usuario_id or public.es_admin());
 
+-- Datos semilla SOLO para desarrollo/demo.
+-- En producción, reemplaza estos correos por cuentas reales de auth.users y ajusta roles.
+-- Si no vas a usar datos de ejemplo, elimina esta sección antes de ejecutar.
 insert into public.usuarios (id, nombre, email, rol)
-select '11111111-1111-1111-1111-111111111111', 'Admin CiudadAlerta', 'admin@ciudadalerta.local', 'admin'
+select gen_random_uuid(), 'Admin CiudadAlerta', 'admin@ciudadalerta.local', 'admin'
 where not exists (
   select 1 from public.usuarios where email = 'admin@ciudadalerta.local'
 );
 
 insert into public.usuarios (id, nombre, email, rol)
-select '22222222-2222-2222-2222-222222222222', 'María Pérez', 'maria@ciudadalerta.local', 'ciudadano'
+select gen_random_uuid(), 'María Pérez', 'maria@ciudadalerta.local', 'ciudadano'
 where not exists (
   select 1 from public.usuarios where email = 'maria@ciudadalerta.local'
 );
 
 insert into public.usuarios (id, nombre, email, rol)
-select '33333333-3333-3333-3333-333333333333', 'Juan Gómez', 'juan@ciudadalerta.local', 'ciudadano'
+select gen_random_uuid(), 'Juan Gómez', 'juan@ciudadalerta.local', 'ciudadano'
 where not exists (
   select 1 from public.usuarios where email = 'juan@ciudadalerta.local'
 );
@@ -293,10 +296,11 @@ select
   19.432608,
   -99.133209,
   'Centro',
-  '22222222-2222-2222-2222-222222222222',
+  u.id,
   'en_proceso',
   'Servicios Públicos'
 from public.categorias c
+join public.usuarios u on u.email = 'maria@ciudadalerta.local'
 where c.nombre = 'Alumbrado'
   and not exists (
     select 1 from public.reportes r
@@ -313,9 +317,10 @@ select
   19.427025,
   -99.167665,
   'Colonia San Miguel',
-  '33333333-3333-3333-3333-333333333333',
+  u.id,
   'pendiente'
 from public.categorias c
+join public.usuarios u on u.email = 'juan@ciudadalerta.local'
 where c.nombre = 'Baches'
   and not exists (
     select 1 from public.reportes r
@@ -324,16 +329,17 @@ where c.nombre = 'Baches'
 
 insert into public.notificaciones (usuario_id, reporte_id, mensaje, leida)
 select
-  '22222222-2222-2222-2222-222222222222',
+  u.id,
   r.id,
   'Tu reporte fue recibido y está siendo atendido.',
   false
 from public.reportes r
+join public.usuarios u on u.email = 'maria@ciudadalerta.local'
 where r.titulo = 'Poste sin luz en avenida principal'
   and not exists (
     select 1
     from public.notificaciones n
-    where n.usuario_id = '22222222-2222-2222-2222-222222222222'
+    where n.usuario_id = u.id
       and n.mensaje = 'Tu reporte fue recibido y está siendo atendido.'
   );
 
@@ -342,7 +348,7 @@ values (
   'fotos-reportes',
   'fotos-reportes',
   true,
-  5242880,
+  5 * 1024 * 1024, -- 5 MB
   array['image/jpeg', 'image/png', 'image/webp']
 )
 on conflict (id) do update

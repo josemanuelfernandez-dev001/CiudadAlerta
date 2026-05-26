@@ -12,7 +12,7 @@ En `/ciudadalerta/package.json` quedaron definidos:
 Crear `ciudadalerta/.env` con:
 
 ```env
-SESSION_SECRET=una_clave_larga_y_segura
+SESSION_SECRET=GENERATE_SECURE_RANDOM_STRING_MIN_32_CHARS
 SUPABASE_URL=https://TU-PROYECTO.supabase.co
 SUPABASE_SERVICE_KEY=TU_SERVICE_ROLE_KEY
 PORT=3000
@@ -49,6 +49,6 @@ El script configura el bucket `fotos-reportes` con:
 
 Para estandarizar archivos en producción, se sugiere usar:
 
-- `reportes/<usuario_id>/<reporte_id>/<timestamp>_<uuid>.jpg`
+- `reportes/{usuario_id}/{reporte_id}/{timestamp}_{uuid}.jpg`
 
 La política de inserción sobre `storage.objects` exige que inicie con `reportes/...` para clientes autenticados (service role no se ve afectado).
