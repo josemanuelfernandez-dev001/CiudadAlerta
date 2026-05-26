@@ -1,52 +1,72 @@
-<%- include('../layout/header') %>
-<h2>Nuevo reporte</h2>
-<% if (error) { %><p class="error"><%= error %></p><% } %>
+<%- include('../layout/citizen-header') %>
 
-<form class="form-reporte" action="/reportes" method="POST" enctype="multipart/form-data">
-  <label for="titulo">Título</label>
-  <input id="titulo" name="titulo" type="text" maxlength="120" required />
+<section class="page-shell">
+  <header class="page-hero">
+    <div>
+      <h1>Nuevo reporte</h1>
+      <p>Cuéntanos qué sucede para derivarlo al área municipal correspondiente.</p>
+    </div>
+  </header>
 
-  <label for="descripcion">Descripción</label>
-  <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
+  <section class="panel">
+    <% if (error) { %><p class="badge estado-rechazado"><%= error %></p><% } %>
 
-  <label for="categoria_id">Categoría</label>
-  <select id="categoria_id" name="categoria_id" required>
-    <option value="">Selecciona una categoría</option>
-    <% (categorias || []).forEach(c => { %>
-      <option value="<%= c.id %>"><%= c.nombre %></option>
-    <% }) %>
-  </select>
+    <form class="form-grid" action="/reportes" method="POST" enctype="multipart/form-data">
+      <div class="full">
+        <label for="titulo">Título</label>
+        <input id="titulo" name="titulo" type="text" maxlength="120" required />
+      </div>
 
-  <label for="zona">Zona / barrio</label>
-  <input id="zona" name="zona" type="text" maxlength="120" placeholder="Ej. Las Panosas" />
+      <div class="full">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion" required></textarea>
+      </div>
 
-  <label for="mapa-reporte">Ubicación en mapa</label>
-  <div id="mapa-reporte" style="height: 340px; border: 1px solid #bbb;"></div>
-  <p class="hint">Haz clic en el mapa para marcar la ubicación exacta del reporte.</p>
+      <div>
+        <label for="categoria_id">Categoría</label>
+        <select id="categoria_id" name="categoria_id" required>
+          <option value="">Selecciona una categoría</option>
+          <% (categorias || []).forEach(c => { %>
+            <option value="<%= c.id %>"><%= c.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
 
-  <label for="latitud">Latitud</label>
-  <input id="latitud" name="latitud" type="number" step="any" required readonly />
+      <div>
+        <label for="zona">Zona / barrio</label>
+        <input id="zona" name="zona" type="text" maxlength="120" placeholder="Ej. Las Panosas" />
+      </div>
 
-  <label for="longitud">Longitud</label>
-  <input id="longitud" name="longitud" type="number" step="any" required readonly />
+      <div class="full">
+        <label for="mapa-reporte">Ubicación en mapa</label>
+        <div id="mapa-reporte" class="map-box"></div>
+        <p class="hint">Haz clic para fijar coordenadas exactas.</p>
+      </div>
 
-  <label for="fotos">Fotos (opcional)</label>
-  <input id="fotos" name="fotos" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+      <div>
+        <label for="latitud">Latitud</label>
+        <input id="latitud" name="latitud" type="number" step="any" required readonly />
+      </div>
 
-  <button class="btn-primary" type="submit">Publicar reporte</button>
-</form>
+      <div>
+        <label for="longitud">Longitud</label>
+        <input id="longitud" name="longitud" type="number" step="any" required readonly />
+      </div>
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin=""
-/>
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""
-></script>
+      <div class="full">
+        <label for="fotos">Fotos (opcional)</label>
+        <input id="fotos" name="fotos" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+      </div>
+
+      <div class="full">
+        <button class="btn" type="submit">Publicar reporte</button>
+      </div>
+    </form>
+  </section>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
   const tarija = [-21.5355, -64.7296];
   const mapa = L.map('mapa-reporte').setView(tarija, 13);
@@ -68,4 +88,4 @@
   });
 </script>
 
-<%- include('../layout/footer') %>
+<%- include('../layout/citizen-footer') %>

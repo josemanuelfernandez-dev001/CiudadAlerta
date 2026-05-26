@@ -1,72 +1,81 @@
-<%- include('../layout/header') %>
+<%- include('../layout/citizen-header') %>
 
-<section class="page-header">
+<section class="page-shell">
+  <header class="page-hero">
     <div>
-        <h1>Detalle del reporte</h1>
-        <% if (reporte) { %>
-            <p><%= reporte.zona || 'Ubicación no especificada' %></p>
-        <% } %>
+      <h1>Detalle del reporte</h1>
+      <% if (reporte) { %>
+        <p><%= reporte.zona || 'Ubicación no especificada' %></p>
+      <% } %>
     </div>
-</section>
+    <% if (reporte) { %>
+      <span class="badge estado-<%= reporte.estado %>"><%= (reporte.estado || '').replace('_', ' ') %></span>
+    <% } %>
+  </header>
 
-<% if (!reporte) { %>
-    <p class="empty">Reporte no encontrado.</p>
-<% } else { %>
-    <article class="card detalle-reporte">
-        <span class="card-estado estado-<%= reporte.estado %>"><%= (reporte.estado || '').replace('_', ' ') %></span>
+  <% if (!reporte) { %>
+    <section class="panel empty-state"><p>Reporte no encontrado.</p></section>
+  <% } else { %>
+    <section class="detalle-grid">
+      <article class="panel">
         <h2><%= reporte.titulo %></h2>
-        <p><strong>Categoría:</strong> <%= reporte.categorias?.nombre || 'Sin categoría' %></p>
-        <p><strong>Zona:</strong> <%= reporte.zona || '—' %></p>
-        <p><strong>Descripción:</strong></p>
+        <p class="card-meta"><strong>Categoría:</strong> <%= reporte.categorias?.nombre || 'Sin categoría' %></p>
         <p><%= reporte.descripcion %></p>
 
-        <hr />
-
-        <p><strong>Autor:</strong> <%= reporte.usuarios?.nombre || 'Desconocido' %></p>
-        <p><strong>Email:</strong> <%= reporte.usuarios?.email || '—' %></p>
-        <p><strong>Votos:</strong> <%= Array.isArray(reporte.votos) ? reporte.votos.length : 0 %></p>
-        <p><strong>Fecha:</strong> <%= new Date(reporte.created_at).toLocaleString('es-BO') %></p>
+        <p class="card-meta">
+          <strong>Autor:</strong> <%= reporte.usuarios?.nombre || 'Desconocido' %> ·
+          <strong>Email:</strong>
+          <% if (usuario && (usuario.rol === 'admin' || usuario.id === reporte.usuario_id)) { %>
+            <%= reporte.usuarios?.email || '—' %>
+          <% } else { %>
+            oculto por privacidad
+          <% } %>
+        </p>
+        <p class="card-meta"><strong>Fecha:</strong> <%= new Date(reporte.created_at).toLocaleString('es-BO') %></p>
 
         <% if (reporte.fotos_reporte && reporte.fotos_reporte.length > 0) { %>
-            <div class="galeria-fotos">
-                <% reporte.fotos_reporte.forEach(foto => { %>
-                    <a href="<%= foto.url_imagen %>" target="_blank" rel="noopener noreferrer">
-                        <img src="<%= foto.url_imagen %>" alt="Foto del reporte" />
-                    </a>
-                <% }) %>
-            </div>
+          <h3>Fotos del reporte</h3>
+          <div class="fotos-grid">
+            <% reporte.fotos_reporte.forEach(foto => { %>
+              <a href="<%= foto.url_imagen %>" target="_blank" rel="noopener noreferrer">
+                <img src="<%= foto.url_imagen %>" alt="Foto del reporte" />
+              </a>
+            <% }) %>
+          </div>
+        <% } %>
+      </article>
+
+      <aside class="panel stack">
+        <p><strong>Apoyos ciudadanos:</strong> <%= Array.isArray(reporte.votos) ? reporte.votos.length : 0 %></p>
+
+        <% if (usuario) { %>
+          <% if (yaVoto) { %>
+            <form action="/reportes/<%= reporte.id %>/votar" method="POST">
+              <input type="hidden" name="_method" value="DELETE" />
+              <button class="btn-secondary" type="submit">Quitar apoyo</button>
+            </form>
+          <% } else { %>
+            <form action="/reportes/<%= reporte.id %>/votar" method="POST">
+              <button class="btn" type="submit">Apoyar reporte</button>
+            </form>
+          <% } %>
         <% } %>
 
         <% if (reporte.historial_estados && reporte.historial_estados.length > 0) { %>
-            <h3>Historial de estados</h3>
-            <ul>
-                <% reporte.historial_estados.forEach(h => { %>
-                    <li>
-                        <strong><%= h.estado_anterior || 'inicio' %> → <%= h.estado_nuevo %></strong>
-                        <span>por <%= h.usuarios?.nombre || 'admin' %></span>
-                        <% if (h.comentario) { %>
-                            <p><%= h.comentario %></p>
-                        <% } %>
-                    </li>
-                <% }) %>
-            </ul>
+          <h3>Historial de atención</h3>
+          <ul class="timeline">
+            <% reporte.historial_estados.forEach(h => { %>
+              <li>
+                <strong><%= h.estado_anterior || 'inicio' %> → <%= h.estado_nuevo %></strong>
+                <p class="card-meta">por <%= h.usuarios?.nombre || 'admin' %></p>
+                <% if (h.comentario) { %><p><%= h.comentario %></p><% } %>
+              </li>
+            <% }) %>
+          </ul>
         <% } %>
+      </aside>
+    </section>
+  <% } %>
+</section>
 
-        <% if (usuario) { %>
-            <div class="acciones-reporte">
-                <% if (yaVoto) { %>
-                    <form action="/reportes/<%= reporte.id %>/votar" method="POST">
-                        <input type="hidden" name="_method" value="DELETE" />
-                        <button type="submit">Quitar voto</button>
-                    </form>
-                <% } else { %>
-                    <form action="/reportes/<%= reporte.id %>/votar" method="POST">
-                        <button type="submit">Votar</button>
-                    </form>
-                <% } %>
-            </div>
-        <% } %>
-    </article>
-<% } %>
-
-<%- include('../layout/footer') %>
+<%- include('../layout/citizen-footer') %>

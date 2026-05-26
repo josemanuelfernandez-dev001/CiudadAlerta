@@ -1,32 +1,35 @@
-<%- include('../layout/header') %>
+<%- include('../layout/citizen-header') %>
 
-<section class="page-header">
+<section class="page-shell">
+  <header class="page-hero">
     <div>
-        <h1>Mi perfil</h1>
-        <p>Información de tu cuenta y actividad.</p>
+      <h1>Mi perfil</h1>
+      <p>Gestiona tus datos y revisa tu actividad comunitaria.</p>
     </div>
+    <a class="btn-secondary" href="/perfil/mis-reportes">Ver mis reportes</a>
+  </header>
+
+  <section class="profile-grid">
+    <article class="panel">
+      <h2>Datos de usuario</h2>
+      <% if (usuario) { %>
+        <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
+        <p><strong>Email:</strong> <%= usuario.email %></p>
+        <p><strong>Rol:</strong> <%= usuario.rol %></p>
+      <% } else { %>
+        <p>No hay sesión activa.</p>
+      <% } %>
+    </article>
+
+    <article class="panel">
+      <h2>Actualizar nombre</h2>
+      <form method="POST" action="/perfil">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" type="text" required value="<%= usuario?.nombre || '' %>" />
+        <button class="btn" type="submit">Guardar cambios</button>
+      </form>
+    </article>
+  </section>
 </section>
 
-<section class="perfil-panel">
-    <div class="card">
-        <h2>Datos de usuario</h2>
-        <% if (usuario) { %>
-            <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
-            <p><strong>Email:</strong> <%= usuario.email %></p>
-            <p><strong>Rol:</strong> <%= usuario.rol %></p>
-        <% } else { %>
-            <p>No hay sesión activa.</p>
-        <% } %>
-    </div>
-
-    <div class="card">
-        <h2>Actualizar nombre</h2>
-        <form method="POST" action="/perfil">
-            <label for="nombre">Nombre</label>
-            <input id="nombre" name="nombre" type="text" required value="<%= usuario?.nombre || '' %>" />
-            <button type="submit">Guardar cambios</button>
-        </form>
-    </div>
-</section>
-
-<%- include('../layout/footer') %>
+<%- include('../layout/citizen-footer') %>

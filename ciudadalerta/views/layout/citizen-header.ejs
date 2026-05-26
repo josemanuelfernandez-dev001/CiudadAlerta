@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CiudadAlerta</title>
+  <link rel="stylesheet" href="/css/citizen.css" />
+</head>
+<body class="citizen-body">
+<header class="citizen-header">
+  <div class="citizen-header__inner">
+    <a class="brand" href="/reportes" aria-label="CiudadAlerta inicio">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true" focusable="false">
+        <circle cx="18" cy="18" r="17" fill="#8f1d3f"/>
+        <path d="M9 22.2c4.2-.4 8.2-4 9-9 2.4 3.7 5.7 6 9 6.4-2.2 4.4-6.2 7.4-11 7.4-2.7 0-5.1-.9-7-2.8z" fill="#4d7c0f"/>
+        <path d="M16.4 8.5h3.2l.8 7.7h-4.8z" fill="#f3d38d"/>
+        <circle cx="18" cy="22" r="1.5" fill="#fff"/>
+      </svg>
+      <span>
+        CiudadAlerta
+        <small>Tarija</small>
+      </span>
+    </a>
+
+    <nav class="citizen-nav" aria-label="Navegación principal">
+      <a href="/reportes">Reportes</a>
+      <a href="/reportes/mapa">Mapa</a>
+      <% if (usuario) { %>
+        <a href="/reportes/nuevo">Nuevo reporte</a>
+        <a href="/perfil">Perfil</a>
+        <a href="/notificaciones">Notificaciones</a>
+        <% if (usuario.rol === 'admin') { %>
+          <a href="/admin/dashboard">Gestión municipal</a>
+        <% } %>
+        <a href="/auth/logout">Cerrar sesión</a>
+      <% } else { %>
+        <a href="/auth/login">Iniciar sesión</a>
+        <a href="/auth/register">Crear cuenta</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
+<main class="citizen-main">
