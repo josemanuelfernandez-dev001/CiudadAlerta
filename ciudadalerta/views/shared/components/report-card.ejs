@@ -1,0 +1,12 @@
+<% const votosCount = Array.isArray(reporte.votos) ? (reporte.votos[0]?.count ?? reporte.votos.length) : 0; %>
+<a class="reporte-card" href="/reportes/<%= reporte.id %>">
+  <%- include('./status-badge', { estado: reporte.estado, showDot: true }) %>
+  <h3><%= reporte.titulo %></h3>
+  <p class="card-meta">
+    <% if (reporte.categorias?.color_hex) { %><span class="category-color" style="background:<%= reporte.categorias.color_hex %>"></span><% } %>
+    <%= reporte.categorias?.nombre || 'Sin categoría' %>
+    <% if (reporte.zona) { %> · <%= reporte.zona %><% } %>
+  </p>
+  <p class="card-fecha"><%= new Date(reporte.created_at).toLocaleDateString('es-BO') %></p>
+  <p class="card-votos">Apoyos ciudadanos: <strong><%= votosCount %></strong></p>
+</a>

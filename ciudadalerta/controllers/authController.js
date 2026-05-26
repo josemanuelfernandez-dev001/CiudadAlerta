@@ -1,18 +1,18 @@
 const supabase = require('../config/supabase');
 
 exports.showLogin = (req, res) => {
-  res.render('auth/login', { error: null });
+  res.render('citizen/auth/login', { error: null });
 };
 
 exports.showRegister = (req, res) => {
-  res.render('auth/register', { error: null });
+  res.render('citizen/auth/register', { error: null });
 };
 
 exports.register = async (req, res) => {
   const { nombre, email, password } = req.body;
   try {
     if (!password || password.length < 8) {
-      return res.render('auth/register', {
+      return res.render('citizen/auth/register', {
         error: 'La contraseña debe tener al menos 8 caracteres'
       });
     }
@@ -20,16 +20,16 @@ exports.register = async (req, res) => {
     const { data, error } = await supabase.auth.admin.createUser({
       email, password, email_confirm: true
     });
-    if (error) return res.render('auth/register', { error: error.message });
+    if (error) return res.render('citizen/auth/register', { error: error.message });
 
     const { error: usuarioError } = await supabase.from('usuarios').insert({
       id: data.user.id, nombre, email, rol: 'ciudadano'
     });
-    if (usuarioError) return res.render('auth/register', { error: usuarioError.message });
+    if (usuarioError) return res.render('citizen/auth/register', { error: usuarioError.message });
 
     res.redirect('/auth/login');
   } catch (e) {
-    res.render('auth/register', { error: e.message });
+    res.render('citizen/auth/register', { error: e.message });
   }
 };
 
@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email, password
     });
-    if (error) return res.render('auth/login', { error: error.message });
+    if (error) return res.render('citizen/auth/login', { error: error.message });
 
     const { data: usuario } = await supabase
       .from('usuarios')
@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
     if (usuario.rol === 'admin') return res.redirect('/admin/dashboard');
     res.redirect('/reportes');
   } catch (e) {
-    res.render('auth/login', { error: e.message });
+    res.render('citizen/auth/login', { error: e.message });
   }
 };
 

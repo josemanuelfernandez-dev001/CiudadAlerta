@@ -1,0 +1,22 @@
+</main>
+<% const isReportes = (currentPath || '').startsWith('/reportes'); %>
+<% const isNuevo = (currentPath || '').startsWith('/reportes/nuevo'); %>
+<% const isNotifs = (currentPath || '').startsWith('/notificaciones'); %>
+<% const isPerfil = (currentPath || '').startsWith('/perfil'); %>
+<nav class="citizen-bottom-nav" aria-label="Navegación móvil">
+  <a class="<%= isReportes && !isNuevo ? 'active' : '' %>" href="/reportes">Reportes</a>
+  <a class="<%= (currentPath || '').startsWith('/reportes/mapa') ? 'active' : '' %>" href="/reportes/mapa">Mapa</a>
+  <% if (usuario) { %>
+    <a class="<%= isNuevo ? 'active' : '' %>" href="/reportes/nuevo">Nuevo</a>
+    <a class="<%= isNotifs ? 'active' : '' %>" href="/notificaciones">Alertas</a>
+    <a class="<%= isPerfil ? 'active' : '' %>" href="/perfil">Perfil</a>
+  <% } else { %>
+    <a class="<%= (currentPath || '').startsWith('/auth/login') ? 'active' : '' %>" href="/auth/login">Entrar</a>
+    <a class="<%= (currentPath || '').startsWith('/auth/register') ? 'active' : '' %>" href="/auth/register">Registro</a>
+  <% } %>
+</nav>
+<footer class="citizen-footer">
+  <small>&copy; <%= new Date().getFullYear() %> CiudadAlerta · Tarija en acción</small>
+</footer>
+</body>
+</html>

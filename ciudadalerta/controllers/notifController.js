@@ -3,7 +3,7 @@ const NotificacionModel = require('../models/notificacionModel');
 exports.index = async (req, res) => {
   try {
     const notifs = await NotificacionModel.listarPorUsuario(req.session.usuario.id);
-    res.render('perfil/notificaciones', { notifs });
+    res.render('citizen/perfil/notificaciones', { notifs });
   } catch (e) {
     console.error('Error al listar notificaciones:', e);
     res.status(500).send('Error al cargar notificaciones');

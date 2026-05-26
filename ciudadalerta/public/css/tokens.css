@@ -1,0 +1,33 @@
+:root {
+  --font-base: 'Segoe UI', Arial, sans-serif;
+  --font-size-body: 16px;
+  --line-height-body: 1.45;
+
+  --bg-cream: #fff9f1;
+  --cream-soft: #fff3e5;
+  --burgundy: #8f1d3f;
+  --burgundy-dark: #5f1230;
+  --valley-green: #4d7c0f;
+  --earth: #9f6f4f;
+  --gold: #d6a547;
+  --ink: #2a1f1d;
+  --muted: #6f5e57;
+  --surface: #ffffff;
+  --line: #ead8c9;
+
+  --admin-bg: #f6f7fb;
+  --admin-surface: #fff;
+  --admin-line: #dbe1ea;
+  --admin-head: #1f2b3a;
+  --admin-ink: #1d2835;
+  --admin-muted: #5f6d7d;
+  --admin-blue: #2f6ee5;
+  --admin-green: #1f8f50;
+  --admin-gold: #c38b2c;
+  --admin-red: #b44040;
+
+  --shadow-soft: 0 10px 24px rgba(103, 56, 39, 0.09);
+  --shadow-admin: 0 12px 30px rgba(25, 38, 56, 0.08);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+}

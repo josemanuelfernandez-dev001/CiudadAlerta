@@ -9,12 +9,12 @@
       <% } %>
     </div>
     <% if (reporte) { %>
-      <span class="badge estado-<%= reporte.estado %>"><%= (reporte.estado || '').replace('_', ' ') %></span>
+      <%- include('../../shared/components/status-badge', { estado: reporte.estado, showDot: false }) %>
     <% } %>
   </header>
 
   <% if (!reporte) { %>
-    <section class="panel empty-state"><p>Reporte no encontrado.</p></section>
+    <%- include('../../shared/components/empty-state', { icon: null, message: 'Reporte no encontrado.' }) %>
   <% } else { %>
     <section class="detalle-grid">
       <article class="panel">

@@ -1,4 +1,4 @@
-<%- include('../layout/admin-header') %>
+<%- include('./layout/admin-header') %>
 
 <section class="admin-hero">
   <div>
@@ -11,39 +11,40 @@
   <p class="panel"><span class="badge estado-rechazado"><%= error %></span></p>
 <% } %>
 
-<section class="panel" style="margin-bottom: 0.85rem;">
-  <h2>Nueva categoría</h2>
-  <form class="inline-form" method="POST" action="/admin/categorias">
-    <input id="nombre" name="nombre" type="text" placeholder="Nombre" required />
-    <input id="icono" name="icono" type="text" placeholder="Icono" />
-    <input id="color_hex" name="color_hex" type="text" placeholder="#3B82F6" />
-    <input id="competencia" name="competencia" type="text" placeholder="Competencia" required />
-    <button class="btn" type="submit">Crear</button>
-  </form>
+<section class="panel panel-grid">
+  <article>
+    <h2>Nueva categoría</h2>
+    <form class="stack" method="POST" action="/admin/categorias">
+      <input id="nombre" name="nombre" type="text" placeholder="Nombre" required />
+      <input id="icono" name="icono" type="text" placeholder="Icono" />
+      <input id="color_hex" name="color_hex" type="text" placeholder="#3B82F6" />
+      <input id="competencia" name="competencia" type="text" placeholder="Competencia" required />
+      <button class="btn" type="submit">Crear</button>
+    </form>
+  </article>
+  <article>
+    <h2>Categorías existentes</h2>
+    <% if (!categorias || categorias.length === 0) { %>
+      <p class="empty">No hay categorías.</p>
+    <% } else { %>
+      <table class="tabla-admin">
+        <thead>
+        <tr><th>Nombre</th><th>Icono</th><th>Color</th><th>Competencia</th><th>Activa</th></tr>
+        </thead>
+        <tbody>
+        <% categorias.forEach(c => { %>
+          <tr>
+            <td><%= c.nombre %></td>
+            <td><%= c.icono || '—' %></td>
+            <td><span class="category-color" style="background:<%= c.color_hex %>"></span> <%= c.color_hex %></td>
+            <td><%= c.competencia %></td>
+            <td><%= c.activa ? 'Sí' : 'No' %></td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </article>
 </section>
 
-<section class="panel">
-  <h2>Categorías existentes</h2>
-  <% if (!categorias || categorias.length === 0) { %>
-    <p class="empty">No hay categorías.</p>
-  <% } else { %>
-    <table class="tabla-admin">
-      <thead>
-      <tr><th>Nombre</th><th>Icono</th><th>Color</th><th>Competencia</th><th>Activa</th></tr>
-      </thead>
-      <tbody>
-      <% categorias.forEach(c => { %>
-        <tr>
-          <td><%= c.nombre %></td>
-          <td><%= c.icono || '—' %></td>
-          <td><span class="category-color" style="background:<%= c.color_hex %>"></span> <%= c.color_hex %></td>
-          <td><%= c.competencia %></td>
-          <td><%= c.activa ? 'Sí' : 'No' %></td>
-        </tr>
-      <% }) %>
-      </tbody>
-    </table>
-  <% } %>
-</section>
-
-<%- include('../layout/admin-footer') %>
+<%- include('./layout/admin-footer') %>

@@ -1,4 +1,4 @@
-<%- include('../layout/admin-header') %>
+<%- include('./layout/admin-header') %>
 
 <section class="admin-hero">
   <div>
@@ -7,37 +7,7 @@
   </div>
 </section>
 
-<form class="panel filter-grid" method="GET" action="/admin/reportes">
-  <div>
-    <label for="zona">Zona</label>
-    <input id="zona" type="text" name="zona" value="<%= filtros?.zona || '' %>" />
-  </div>
-
-  <div>
-    <label for="estado">Estado</label>
-    <select id="estado" name="estado">
-      <option value="">Todos</option>
-      <% ['pendiente', 'en_proceso', 'resuelto', 'rechazado'].forEach(estado => { %>
-        <option value="<%= estado %>" <%= filtros?.estado === estado ? 'selected' : '' %>><%= estado.replace('_', ' ') %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div>
-    <label for="categoria_id">Categoría</label>
-    <select id="categoria_id" name="categoria_id">
-      <option value="">Todas</option>
-      <% (categorias || []).forEach(c => { %>
-        <option value="<%= c.id %>" <%= String(filtros?.categoria_id || '') === String(c.id) ? 'selected' : '' %>><%= c.nombre %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div>
-    <label>&nbsp;</label>
-    <button class="btn" type="submit">Filtrar</button>
-  </div>
-</form>
+<%- include('../shared/components/report-filters', { action: '/admin/reportes', categorias, filtros, submitLabel: 'Filtrar', allStatesLabel: 'Todos', showZona: true }) %>
 
 <section class="panel">
   <table class="tabla-admin">
@@ -50,7 +20,7 @@
       <% const votosCount = Array.isArray(r.votos) ? (r.votos[0]?.count ?? r.votos.length) : 0; %>
       <tr>
         <td><a href="/reportes/<%= r.id %>"><%= r.titulo %></a></td>
-        <td><span class="badge estado-<%= r.estado %>"><%= (r.estado || '').replace('_', ' ') %></span></td>
+        <td><%- include('../shared/components/status-badge', { estado: r.estado, showDot: false }) %></td>
         <td><%= r.zona || '—' %></td>
         <td><%= votosCount %></td>
         <td><%= new Date(r.created_at).toLocaleDateString('es-BO') %></td>
@@ -75,4 +45,4 @@
   </table>
 </section>
 
-<%- include('../layout/admin-footer') %>
+<%- include('./layout/admin-footer') %>

@@ -9,9 +9,7 @@
   </header>
 
   <% if (!notifs || notifs.length === 0) { %>
-    <section class="panel empty-state">
-      <p>No tienes notificaciones por ahora.</p>
-    </section>
+    <%- include('../../shared/components/empty-state', { icon: null, message: 'No tienes notificaciones por ahora.' }) %>
   <% } else { %>
     <ul class="notif-list">
       <% notifs.forEach(n => { %>

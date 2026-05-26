@@ -1,0 +1,23 @@
+<%- include('../layout/citizen-header') %>
+
+<section class="page-shell">
+  <header class="page-hero">
+    <div>
+      <h1>Mis reportes</h1>
+      <p>Seguimiento de incidencias enviadas desde tu cuenta.</p>
+    </div>
+    <a class="btn" href="/reportes/nuevo">Nuevo reporte</a>
+  </header>
+
+  <% if (!reportes || reportes.length === 0) { %>
+    <%- include('../../shared/components/empty-state', { icon: 'reportes', message: 'Aún no has creado reportes.' }) %>
+  <% } else { %>
+    <section class="reportes-grid">
+      <% reportes.forEach(reporte => { %>
+        <%- include('../../shared/components/report-card', { reporte }) %>
+      <% }) %>
+    </section>
+  <% } %>
+</section>
+
+<%- include('../layout/citizen-footer') %>
