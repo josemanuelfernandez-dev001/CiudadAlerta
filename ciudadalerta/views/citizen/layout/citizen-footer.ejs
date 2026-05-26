@@ -3,16 +3,20 @@
 <% const isNuevo = (currentPath || '').startsWith('/reportes/nuevo'); %>
 <% const isNotifs = (currentPath || '').startsWith('/notificaciones'); %>
 <% const isPerfil = (currentPath || '').startsWith('/perfil'); %>
+<% const isReportesActive = isReportes && !isNuevo; %>
+<% const isMapaActive = (currentPath || '').startsWith('/reportes/mapa'); %>
+<% const isLoginActive = (currentPath || '').startsWith('/auth/login'); %>
+<% const isRegisterActive = (currentPath || '').startsWith('/auth/register'); %>
 <nav class="citizen-bottom-nav" aria-label="Navegación móvil">
-  <a class="<%= isReportes && !isNuevo ? 'active' : '' %>" href="/reportes">Reportes</a>
-  <a class="<%= (currentPath || '').startsWith('/reportes/mapa') ? 'active' : '' %>" href="/reportes/mapa">Mapa</a>
+  <a class="<%= isReportesActive ? 'active' : '' %>" <%= isReportesActive ? 'aria-current=\"page\"' : '' %> href="/reportes">Reportes</a>
+  <a class="<%= isMapaActive ? 'active' : '' %>" <%= isMapaActive ? 'aria-current=\"page\"' : '' %> href="/reportes/mapa">Mapa</a>
   <% if (usuario) { %>
-    <a class="<%= isNuevo ? 'active' : '' %>" href="/reportes/nuevo">Nuevo</a>
-    <a class="<%= isNotifs ? 'active' : '' %>" href="/notificaciones">Alertas</a>
-    <a class="<%= isPerfil ? 'active' : '' %>" href="/perfil">Perfil</a>
+    <a class="<%= isNuevo ? 'active' : '' %>" <%= isNuevo ? 'aria-current=\"page\"' : '' %> href="/reportes/nuevo">Nuevo</a>
+    <a class="<%= isNotifs ? 'active' : '' %>" <%= isNotifs ? 'aria-current=\"page\"' : '' %> href="/notificaciones">Alertas</a>
+    <a class="<%= isPerfil ? 'active' : '' %>" <%= isPerfil ? 'aria-current=\"page\"' : '' %> href="/perfil">Perfil</a>
   <% } else { %>
-    <a class="<%= (currentPath || '').startsWith('/auth/login') ? 'active' : '' %>" href="/auth/login">Entrar</a>
-    <a class="<%= (currentPath || '').startsWith('/auth/register') ? 'active' : '' %>" href="/auth/register">Registro</a>
+    <a class="<%= isLoginActive ? 'active' : '' %>" <%= isLoginActive ? 'aria-current=\"page\"' : '' %> href="/auth/login">Entrar</a>
+    <a class="<%= isRegisterActive ? 'active' : '' %>" <%= isRegisterActive ? 'aria-current=\"page\"' : '' %> href="/auth/register">Registro</a>
   <% } %>
 </nav>
 <footer class="citizen-footer">
